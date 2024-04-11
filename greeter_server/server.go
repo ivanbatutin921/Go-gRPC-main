@@ -11,6 +11,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	//"google.golang.org/grpc/credentials/insecure"
 )
 
@@ -57,7 +58,7 @@ func main() {
 			return err
 		}
 
-		conn, err := grpc.Dial(fmt.Sprintf(":%d", *port), grpc.WithInsecure())
+		conn, err := grpc.Dial(":port", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Fatalf("Failed to dial server: %v", err)
 		}
