@@ -4,7 +4,7 @@
 // - protoc             v4.25.3
 // source: chat.proto
 
-package chat
+package proto
 
 import (
 	context "context"
@@ -38,7 +38,7 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 
 func (c *userServiceClient) CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/helloworld.UserService/CreateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.UserService/CreateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (c *userServiceClient) CreateUser(ctx context.Context, in *User, opts ...gr
 
 func (c *userServiceClient) ReadUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/helloworld.UserService/ReadUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.UserService/ReadUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *userServiceClient) ReadUser(ctx context.Context, in *UserId, opts ...gr
 
 func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserMessage, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/helloworld.UserService/UpdateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.UserService/UpdateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserMessag
 
 func (c *userServiceClient) DeleteUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/helloworld.UserService/DeleteUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.UserService/DeleteUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func _UserService_CreateUser_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/helloworld.UserService/CreateUser",
+		FullMethod: "/proto.UserService/CreateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).CreateUser(ctx, req.(*User))
@@ -140,7 +140,7 @@ func _UserService_ReadUser_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/helloworld.UserService/ReadUser",
+		FullMethod: "/proto.UserService/ReadUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).ReadUser(ctx, req.(*UserId))
@@ -158,7 +158,7 @@ func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/helloworld.UserService/UpdateUser",
+		FullMethod: "/proto.UserService/UpdateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).UpdateUser(ctx, req.(*UpdateUserMessage))
@@ -176,7 +176,7 @@ func _UserService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/helloworld.UserService/DeleteUser",
+		FullMethod: "/proto.UserService/DeleteUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).DeleteUser(ctx, req.(*UserId))
@@ -188,7 +188,7 @@ func _UserService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "helloworld.UserService",
+	ServiceName: "proto.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
