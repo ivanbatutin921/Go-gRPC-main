@@ -1,0 +1,33 @@
+
+syntax = "proto3";
+
+option go_package = "./chat";
+
+
+package helloworld;
+
+service UserService {
+  rpc CreateUser (User) returns (User) {}
+  rpc ReadUser (UserId) returns (User) {}
+  rpc UpdateUser (UpdateUserMessage) returns (User) {}
+  rpc DeleteUser (UserId) returns (User) {}
+}
+
+message User {
+  string name = 1;
+  string email = 2;
+  reserved 3 to 5;
+}
+
+message UserId {
+  int32 id = 1;
+}
+
+message UpdateUserMessage{
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+
+

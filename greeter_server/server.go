@@ -1,76 +1,38 @@
 package main
 
 import (
-	"context"
+	//"context"
 	"flag"
 	"fmt"
 	"log"
-	"net"
+	//"net"
 
-	pb "root/chat"
+	pb "root/mk/chat"
+	routes "root/greeter_server/routes"
 
 	"github.com/gofiber/fiber/v2"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	// "google.golang.org/grpc"
+	// "google.golang.org/grpc/credentials/insecure"
 	//"google.golang.org/grpc/credentials/insecure"
 )
 
 var (
+	mk   pb.UnimplementedUserServiceServer
 	port = flag.Int("port", 50052, "The server port")
 )
 
-// server is used to implement helloworld.GreeterServer.
 type server struct {
-	pb.UnimplementedGreeterServer
+	pb.UnimplementedUserServiceServer
 }
 
-// SayHello implements helloworld.GreeterServer
-func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	log.Printf("Received: %v", in.GetName())
-	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
-}
-func runGRPCServer() {
-	flag.Parse()
-	//Создается слушатель TCP на указанном порту
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	//создаем gRPC сервер
-	s := grpc.NewServer()
-
-	//регистрируем сервис
-	pb.RegisterGreeterServer(s, &server{})
-	log.Printf("server listening at %v", lis.Addr())
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+func AllRoutes(app *fiber.App, s *server) {
+	app.Get("/",routes.ReadUser(mk))
+	//app.Post("/", s.CreateUser())
 }
 
 func main() {
-
-	go runGRPCServer()
-
 	app := fiber.New()
-	app.Get("/hello", func(c *fiber.Ctx) error {
-		clientData := new(pb.HelloRequest)
-		if err := c.BodyParser(clientData); err != nil {
-			return err
-		}
+	s := new(server)
 
-		conn, err := grpc.Dial(":port", grpc.WithTransportCredentials(insecure.NewCredentials()))
-		if err != nil {
-			log.Fatalf("Failed to dial server: %v", err)
-		}
-		defer conn.Close()
-
-		client := pb.NewGreeterClient(conn)
-		reply, err := client.SayHello(context.Background(), clientData)
-		if err != nil {
-			return err
-		}
-
-		return c.SendString(reply.Message)
-	})
-	log.Fatal(app.Listen(":8000"))
+	log.Fatal(app.Listen(fmt.Sprintf(":%d", *port)))
 }
