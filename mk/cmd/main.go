@@ -21,9 +21,9 @@ func main() {
 	} else {
 		fmt.Println("server started")
 	}
-	s := grpc.NewServer()
-	pb.RegisterUserServiceServer(s, &server.Server{})
-	if err := s.Serve(lis); err != nil {
+	mk := grpc.NewServer()
+	pb.RegisterUserServiceServer(mk, &server.Server{})
+	if err := mk.Serve(lis); err != nil {
 		fmt.Printf("failed to serve: %v", err)
 	}
 }

@@ -6,7 +6,6 @@ import (
 	//"fmt"
 
 	"context"
-	"log"
 	pb "root/mk/chat"
 	"strconv"
 	"time"
@@ -14,23 +13,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func CreateUser(mpx pb.UserServiceClient) fiber.Handler {
+func CreateUser(mk pb.UserServiceClient) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		body := &pb.User{}
-		if err := c.BodyParser(body); err != nil {
-			log.Fatal("данные из тела не прочитаны", err)
-			return err
+		data := pb.User{}
+		if err := c.BodyParser(&data); err != nil {
+			return c.JSON(fiber.Map{"status": "error", "message": "не удалось прочитать тело запроса", "data": err})
 		}
-		if mpx == nil {
-			return c.SendStatus(fiber.StatusBadRequest)
-		}
+		ctx := context.Background()
 
-		user, err := mpx.CreateUser(context.Background(), body)
+		res, err := mk.CreateUser(ctx, &data)
 		if err != nil {
-			log.Println(err)
-		}		
-
-		return c.JSON(user)
+			return c.JSON(fiber.Map{"status": "error", "message": "не удалось создать пользователя", "data": err})
+		}
+		return c.JSON(res)
 	}
 }
 
