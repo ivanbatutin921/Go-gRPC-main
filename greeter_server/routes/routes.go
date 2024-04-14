@@ -6,6 +6,7 @@ import (
 	//"fmt"
 
 	"context"
+	"log"
 	pb "root/mk/chat"
 	"strconv"
 	"time"
@@ -19,13 +20,21 @@ func CreateUser(mk pb.UserServiceClient) fiber.Handler {
 		if err := c.BodyParser(&data); err != nil {
 			return c.JSON(fiber.Map{"status": "error", "message": "не удалось прочитать тело запроса", "data": err})
 		}
-		ctx := context.Background()
+		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+		defer cancel()
 
-		res, err := mk.CreateUser(ctx, &data)
-		if err != nil {
-			return c.JSON(fiber.Map{"status": "error", "message": "не удалось создать пользователя", "data": err})
-		}
-		return c.JSON(res)
+		ch := make(chan pb.User, 1)
+
+		go func() {
+			res, err := mk.CreateUser(ctx, &data)
+			if err != nil {
+				log.Fatal(err)
+			}
+			ch <- *res
+
+		}()
+		data = <-ch
+		return c.JSON(data)
 	}
 }
 

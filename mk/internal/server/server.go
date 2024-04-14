@@ -32,3 +32,7 @@ func (s *Server) ReadUser(ctx context.Context, req *pb.UserId) (*pb.User, error)
 	}
 	return &pb.User{Name: user.Name, Email: user.Email}, nil
 }
+
+func(s *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserMessage) (*pb.User, error) {
+	
+}

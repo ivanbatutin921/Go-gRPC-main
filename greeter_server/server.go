@@ -25,7 +25,7 @@ func RunGrpcServer() {
 }
 
 func AllRoutes(app *fiber.App, mk pb.UserServiceClient) {
-	
+
 	app.Post("/createuser", routes.CreateUser(mk))
 
 	app.Get("/getuser/:id", routes.ReadUser(mk))
