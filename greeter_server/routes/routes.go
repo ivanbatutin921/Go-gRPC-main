@@ -46,12 +46,18 @@ func CreateManyUsers(mk pb.UserServiceClient) fiber.Handler {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Не удалось распарсить данные из тела запроса", "error": err.Error()})
 		}
 
-		res, err := mk.CreateManyUsers(context.Background(), &data)
-		if err != nil {
-			log.Fatal(err)
-		}
+		ch := make(chan pb.UserList, 1)
+		go func(){
+			res, err := mk.CreateManyUsers(context.Background(), &data)
+			if err != nil {
+				log.Fatal(err)
+			}
+			ch <- *res
+	
+		}()
+		data = <-ch
 
-		return c.JSON(res)
+		return c.JSON(data)
 	}
 }
 
@@ -74,7 +80,6 @@ func ReadUser(mpx pb.UserServiceClient) fiber.Handler {
 		if err != nil {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
-
 		return c.JSON(user)
 	}
 }
