@@ -25,29 +25,13 @@ func (s *Server) CreateUser(ctx context.Context, req *pb.User) (*pb.User, error)
 }
 
 func (s *Server) CreateManyUsers(ctx context.Context, req *pb.UserList) (*pb.UserList, error) {
-	// users := make([]*pb.User, len(req.Users))
-	// for i, user := range req.Users {
-	// 	users[i] = &pb.User{
-	// 		Name:  user.Name,
-	// 		Email: user.Email,
-	// 	}
-	// }
-
-	users := &pb.UserList{
-		Users: []*pb.User{
-			{Name: "user1", Email: "user1@example.com"},
-			{Name: "user2", Email: "user2@example.com"},
-			{Name: "user3", Email: "user3@example.com"},
-		},
-	}
-
-	for _, user := range users.Users {
+	for _, user := range req.Users {
 		err := db.DB.DB.Create(&model.User{Name: user.Name, Email: user.Email})
 		if err != nil {
 			println("error")
 		}
 	}
-	return &pb.UserList{Users: users.Users}, nil
+	return &pb.UserList{Users: req.Users}, nil
 }
 
 func (s *Server) ReadUser(ctx context.Context, req *pb.UserId) (*pb.User, error) {
