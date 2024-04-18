@@ -4,7 +4,7 @@
 // - protoc             v4.25.3
 // source: chat.proto
 
-package proto
+package chat
 
 import (
 	context "context"
@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	CreateManyUsers(ctx context.Context, in *UserList, opts ...grpc.CallOption) (*UserList, error)
 	ReadUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error)
 	UpdateUser(ctx context.Context, in *UpdateUserMessage, opts ...grpc.CallOption) (*User, error)
 	DeleteUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error)
@@ -39,6 +40,15 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 func (c *userServiceClient) CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
 	err := c.cc.Invoke(ctx, "/proto.UserService/CreateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) CreateManyUsers(ctx context.Context, in *UserList, opts ...grpc.CallOption) (*UserList, error) {
+	out := new(UserList)
+	err := c.cc.Invoke(ctx, "/proto.UserService/CreateManyUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +87,7 @@ func (c *userServiceClient) DeleteUser(ctx context.Context, in *UserId, opts ...
 // for forward compatibility
 type UserServiceServer interface {
 	CreateUser(context.Context, *User) (*User, error)
+	CreateManyUsers(context.Context, *UserList) (*UserList, error)
 	ReadUser(context.Context, *UserId) (*User, error)
 	UpdateUser(context.Context, *UpdateUserMessage) (*User, error)
 	DeleteUser(context.Context, *UserId) (*User, error)
@@ -89,6 +100,9 @@ type UnimplementedUserServiceServer struct {
 
 func (UnimplementedUserServiceServer) CreateUser(context.Context, *User) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedUserServiceServer) CreateManyUsers(context.Context, *UserList) (*UserList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateManyUsers not implemented")
 }
 func (UnimplementedUserServiceServer) ReadUser(context.Context, *UserId) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadUser not implemented")
@@ -126,6 +140,24 @@ func _UserService_CreateUser_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).CreateUser(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_CreateManyUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserList)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreateManyUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserService/CreateManyUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreateManyUsers(ctx, req.(*UserList))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -194,6 +226,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateUser",
 			Handler:    _UserService_CreateUser_Handler,
+		},
+		{
+			MethodName: "CreateManyUsers",
+			Handler:    _UserService_CreateManyUsers_Handler,
 		},
 		{
 			MethodName: "ReadUser",

@@ -6,6 +6,7 @@ import (
 	//"fmt"
 
 	"context"
+	"fmt"
 	"log"
 	pb "root/mk/chat"
 	"strconv"
@@ -35,6 +36,31 @@ func CreateUser(mk pb.UserServiceClient) fiber.Handler {
 		}()
 		data = <-ch
 		return c.JSON(data)
+	}
+}
+
+func CreateManyUsers(mk pb.UserServiceClient) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		data := pb.UserList{}
+
+		// Прочитать и распарсить массив из тела запроса
+		if err := c.BodyParser(&data); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Не удалось распарсить данные из тела запроса", "error": err.Error()})
+		}
+		
+			// users := []*pb.User{
+	// 	{Name: "Vasya", Email: "vasya@gmail.com"},
+	// 	{Name: "Petya", Email: "petya@gmail.com"},
+	// 	{Name: "Sasha", Email: "sasha@gmail.com"},
+	// }
+
+		// Вызвать метод CreateManyUsers с данными из тела запроса
+		res, err := mk.CreateManyUsers(context.Background(), &data)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return c.JSON(res)
 	}
 }
 

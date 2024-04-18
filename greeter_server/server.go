@@ -27,7 +27,7 @@ func RunGrpcServer() {
 func AllRoutes(app *fiber.App, mk pb.UserServiceClient) {
 
 	app.Post("/createuser", routes.CreateUser(mk))
-
+	app.Post("/createmanyusers", routes.CreateManyUsers(mk))
 	app.Get("/getuser/:id", routes.ReadUser(mk))
 	app.Get("/hello", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")

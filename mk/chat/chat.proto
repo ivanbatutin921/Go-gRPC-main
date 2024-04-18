@@ -8,9 +8,14 @@ package proto;
 
 service UserService {
   rpc CreateUser (User) returns (User) {}
+  rpc CreateManyUsers (UserList) returns (UserList) {}
   rpc ReadUser (UserId) returns (User) {}
   rpc UpdateUser (UpdateUserMessage) returns (User) {}
   rpc DeleteUser (UserId) returns (User) {}
+}
+
+message UserList {
+  repeated User users = 1;
 }
 
 message User {
