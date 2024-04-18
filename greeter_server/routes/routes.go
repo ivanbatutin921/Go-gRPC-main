@@ -83,3 +83,16 @@ func ReadUser(mpx pb.UserServiceClient) fiber.Handler {
 		return c.JSON(user)
 	}
 }
+
+func ReadAllUsers(mpx pb.UserServiceClient) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+		defer cancel()
+
+		data,err := mpx.ReadAllUsers(ctx, &pb.Empty{})
+		if err!=nil{
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		return c.JSON(data)
+	}
+}

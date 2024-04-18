@@ -25,8 +25,7 @@ type UserServiceClient interface {
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	CreateManyUsers(ctx context.Context, in *UserList, opts ...grpc.CallOption) (*UserList, error)
 	ReadUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error)
-	UpdateUser(ctx context.Context, in *UpdateUserMessage, opts ...grpc.CallOption) (*User, error)
-	DeleteUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error)
+	ReadAllUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UserList, error)
 }
 
 type userServiceClient struct {
@@ -64,18 +63,9 @@ func (c *userServiceClient) ReadUser(ctx context.Context, in *UserId, opts ...gr
 	return out, nil
 }
 
-func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserMessage, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
-	err := c.cc.Invoke(ctx, "/proto.UserService/UpdateUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) DeleteUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
-	err := c.cc.Invoke(ctx, "/proto.UserService/DeleteUser", in, out, opts...)
+func (c *userServiceClient) ReadAllUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UserList, error) {
+	out := new(UserList)
+	err := c.cc.Invoke(ctx, "/proto.UserService/ReadAllUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +79,7 @@ type UserServiceServer interface {
 	CreateUser(context.Context, *User) (*User, error)
 	CreateManyUsers(context.Context, *UserList) (*UserList, error)
 	ReadUser(context.Context, *UserId) (*User, error)
-	UpdateUser(context.Context, *UpdateUserMessage) (*User, error)
-	DeleteUser(context.Context, *UserId) (*User, error)
+	ReadAllUsers(context.Context, *Empty) (*UserList, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -107,11 +96,8 @@ func (UnimplementedUserServiceServer) CreateManyUsers(context.Context, *UserList
 func (UnimplementedUserServiceServer) ReadUser(context.Context, *UserId) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadUser not implemented")
 }
-func (UnimplementedUserServiceServer) UpdateUser(context.Context, *UpdateUserMessage) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
-}
-func (UnimplementedUserServiceServer) DeleteUser(context.Context, *UserId) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+func (UnimplementedUserServiceServer) ReadAllUsers(context.Context, *Empty) (*UserList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadAllUsers not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -180,38 +166,20 @@ func _UserService_ReadUser_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserMessage)
+func _UserService_ReadAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UpdateUser(ctx, in)
+		return srv.(UserServiceServer).ReadAllUsers(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.UserService/UpdateUser",
+		FullMethod: "/proto.UserService/ReadAllUsers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UpdateUser(ctx, req.(*UpdateUserMessage))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserId)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).DeleteUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/proto.UserService/DeleteUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).DeleteUser(ctx, req.(*UserId))
+		return srv.(UserServiceServer).ReadAllUsers(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -236,12 +204,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_ReadUser_Handler,
 		},
 		{
-			MethodName: "UpdateUser",
-			Handler:    _UserService_UpdateUser_Handler,
-		},
-		{
-			MethodName: "DeleteUser",
-			Handler:    _UserService_DeleteUser_Handler,
+			MethodName: "ReadAllUsers",
+			Handler:    _UserService_ReadAllUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

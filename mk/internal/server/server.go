@@ -42,3 +42,15 @@ func (s *Server) ReadUser(ctx context.Context, req *pb.UserId) (*pb.User, error)
 	}
 	return &pb.User{Name: user.Name, Email: user.Email}, nil
 }
+
+func (s *Server) ReadAllUsers(ctx context.Context, _ *pb.Empty) (*pb.UserList, error) {
+	data := pb.UserList{Users: []*pb.User{}}
+
+	var users []model.User
+	db.DB.DB.Find(&users)
+	for _, user := range users {
+		data.Users = append(data.Users, &pb.User{Name: user.Name, Email: user.Email})
+	}
+
+	return &data, nil
+}
