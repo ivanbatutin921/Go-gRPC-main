@@ -31,8 +31,8 @@ func (s *Server) allRoutes() {
 
 	s.app.Post("/createuser", userHandler.CreateUser)
 	s.app.Post("/createmanyusers", userHandler.CreateManyUsers)
-	s.app.Get("/getuser/:id", userHandler.ReadUser)
-	s.app.Get("/getallusers", userHandler.ReadAllUsers)
+	s.app.Get("/users/:id", userHandler.ReadUser)
+	s.app.Get("/users", userHandler.ReadAllUsers)
 	s.app.Get("/hello", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
