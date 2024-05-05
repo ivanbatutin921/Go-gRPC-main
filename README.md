@@ -1,0 +1,1 @@
+[![Swagger API Documentation](https://img.shields.io/badge/Swagger-View%20API%20Documentation-orange)](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/ivanbatutin921/Go-gRPC-main/main/swagger.yaml)
