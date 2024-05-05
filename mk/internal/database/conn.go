@@ -1,44 +1,38 @@
-package initializers
+package database
 
 import (
 	"fmt"
 	"log"
-	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type Data struct {
-	DB *gorm.DB
+type DB struct {
+	db *gorm.DB
 }
 
-var DB Data
+func (c *DB) Connect() {
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Fatalf("Error loading .env file: %s", err.Error())
+	// }
 
-func ConnectToDB() (Data, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
+	dsn := fmt.Sprintf("postgres://postgres.nmbrrclripkumxfogbfl:P1Ju1C1q7dGOUV1N@aws-0-eu-central-1.pooler.supabase.com:5432/postgres")
 
-	//dsn := fmt.Sprintf("postgres://postgres.nmbrrclripkumxfogbfl:P1Ju1C1q7dGOUV1N@aws-0-eu-central-1.pooler.supabase.com:5432/postgres")
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
-		os.Getenv("PGHOST"),
-		os.Getenv("PGUSER"),
-		os.Getenv("PGPASSWORD"),
-		os.Getenv("PGDATABASE"),
-		os.Getenv("PGPORT"),
-	)
+	// dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
+	// 	os.Getenv("PGHOST"),
+	// 	os.Getenv("PGUSER"),
+	// 	os.Getenv("PGPASSWORD"),
+	// 	os.Getenv("PGDATABASE"),
+	// 	os.Getenv("PGPORT"),
+	// )
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return Data{}, err
+		log.Fatal(err)
 	}
 
-	DB = Data{
-		DB: db,
-	}
-	fmt.Println("connected")
-	return DB, nil
+	c.db = db
+	log.Println("Подключение в бд прошло успешно.")
+
 }
